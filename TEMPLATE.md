@@ -31,7 +31,7 @@ Variables: `MQTT_USERNAME` mqtt, `MQTT_PASSWORD` (secret 32), `MQTT_MAX_CONNECTI
 
 | Service | Idle RAM | Typical RAM | CPU |
 |---|---|---|---|
-| Mosquitto | ≈13 MB (measured, 13-17 MB) | 10-100 MB (connections, retained messages) | ≈0 |
+| Mosquitto | ≈15 MB (measured, broker + gateway) | 10-100 MB (connections, retained messages) | ≈0 |
 
 Estimated cost: well under $1/month + volume. Minimum plan: Trial.
 

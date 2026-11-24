@@ -66,7 +66,7 @@ One broker handles thousands of connected devices on a small amount of RAM; scal
 
 **Resources**
 
-Measured on Railway: about 13 MB RAM idle (broker plus the health helper) and near 0 vCPU. Trial is enough.
+Measured on Railway: about 15 MB RAM idle (broker plus the gateway) and near 0 vCPU. Trial is enough.
 
 ### Why Deploy Eclipse Mosquitto on Railway?
 
