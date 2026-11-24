@@ -1,0 +1,82 @@
+{
+ "name": "Eclipse Mosquitto 2.1 MQTT Broker",
+ "idSeed": "Eclipse Mosquitto 2.1 MQTT Broker / 2026-11-24",
+ "description": "MQTT broker with password auth, TCP proxy, secure WebSockets and a volume.",
+ "category": "Queues",
+ "tags": [
+  "mosquitto",
+  "mqtt",
+  "iot",
+  "message-broker",
+  "websockets",
+  "home-automation",
+  "eclipse"
+ ],
+ "image": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/mosquitto.svg",
+ "upstream": {
+  "mosquitto": "eclipse-mosquitto:2.1.4-alpine@sha256:fa12172a051310efe5bcb7a6a11b77bd5faacb82cbacd7742aa758bf024fd8e4 (EPL-2.0 OR BSD-3-Clause)",
+  "checked": "2026-11-24"
+ },
+ "services": {
+  "Mosquitto": {
+   "icon": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/mosquitto.svg",
+   "source": {
+    "repo": "baranberkay96/mosquitto-railway",
+    "rootDirectory": "/services/mosquitto"
+   },
+   "healthcheckPath": "/healthz",
+   "healthcheckTimeout": 300,
+   "restartPolicyType": "ALWAYS",
+   "numReplicas": 1,
+   "publicDomain": true,
+   "targetPort": 8080,
+   "tcpProxy": 1883,
+   "volume": {
+    "mountPath": "/mosquitto/data"
+   },
+   "variables": {
+    "MQTT_USERNAME": {
+     "defaultValue": "mqtt",
+     "description": "MQTT user (letters, digits, . _ @ -).",
+     "required": false
+    },
+    "MQTT_PASSWORD": {
+     "defaultValue": "${{secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\")}}",
+     "description": "MQTT password (12-128 chars), re-applied at every start.",
+     "required": false
+    },
+    "MQTT_MAX_CONNECTIONS": {
+     "defaultValue": "-1",
+     "description": "Maximum client connections per listener (-1 = unlimited).",
+     "required": false
+    },
+    "PORT": {
+     "defaultValue": "8081",
+     "description": "Private healthcheck port (GET /healthz). Not an MQTT port.",
+     "required": false
+    },
+    "MQTT_URL": {
+     "defaultValue": "mqtt://${{RAILWAY_PRIVATE_DOMAIN}}:1883",
+     "description": "Broker URL for Railway services (add the user and password in your client).",
+     "required": false
+    },
+    "MQTT_PUBLIC_URL": {
+     "defaultValue": "mqtt://${{RAILWAY_TCP_PROXY_DOMAIN}}:${{RAILWAY_TCP_PROXY_PORT}}",
+     "description": "Plain MQTT from outside Railway through the TCP proxy.",
+     "required": false
+    },
+    "MQTT_WEBSOCKET_URL": {
+     "defaultValue": "wss://${{RAILWAY_PUBLIC_DOMAIN}}/mqtt",
+     "description": "Encrypted MQTT over WebSockets (browsers, MQTT.js, most clients).",
+     "required": false
+    },
+    "RAILWAY_DEPLOYMENT_DRAINING_SECONDS": {
+     "defaultValue": "15",
+     "description": "Seconds Mosquitto gets to save retained messages and sessions on redeploy.",
+     "required": false
+    }
+   }
+  }
+ },
+ "buckets": []
+}
