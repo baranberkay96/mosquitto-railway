@@ -32,7 +32,7 @@ Variables: `MQTT_USERNAME` mqtt, `MQTT_PASSWORD` (secret 32), `MQTT_MAX_CONNECTI
 
 | Service | Idle RAM | Typical RAM | CPU |
 |---|---|---|---|
-| Mosquitto | MQ_RAM (measured) | 10-100 MB (connections, retained messages) | ≈0 |
+| Mosquitto | ≈13 MB (measured, 13-17 MB) | 10-100 MB (connections, retained messages) | ≈0 |
 
 Estimated cost: well under $1/month + volume. Minimum plan: Trial.
 
@@ -41,7 +41,8 @@ Estimated cost: well under $1/month + volume. Minimum plan: Trial.
 - `/healthz` passes; anonymous CONNECT refused; wrong password refused.
 - Publish/subscribe through the TCP proxy and over `wss://{domain}/mqtt`.
 - Retained message survives a redeploy.
-- `MQTT_PASSWORD=short` → deploy SUCCESS, user locked, warning (healthcheck then reports the lock only via logs, see open questions).
+- `MQTT_PASSWORD=short` → deploy SUCCESS, user locked, warning (the healthcheck logs in with the random password, so it stays healthy; see open questions).
+- `MQTT_MAX_CONNECTIONS` is set per listener (before any `listener` line Mosquitto would create a default listener on 1883 and fail with "Address in use").
 
 ## Open questions
 
