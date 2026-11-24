@@ -45,7 +45,7 @@ chown -R mosquitto:mosquitto "$DATA"
 umask 077
 : > "$PASSWD"
 mosquitto_passwd -b "$PASSWD" "$user" "$pass"
-chown mosquitto:mosquitto "$PASSWD"
+chown root:root "$PASSWD"   # Mosquitto 2.1 reads it as root and warns otherwise
 chmod 0600 "$PASSWD"
 # Credentials for the local healthcheck login (root-only file).
 mkdir -p /run
@@ -62,7 +62,6 @@ password_file $PASSWD
 persistence true
 persistence_location $DATA/
 autosave_interval 300
-max_connections $max_conn
 log_dest stdout
 log_type error
 log_type warning
@@ -74,10 +73,12 @@ log_timestamp_format %Y-%m-%dT%H:%M:%S
 # MQTT, all IPv4 and IPv6 addresses (private network and TCP proxy).
 listener 1883
 protocol mqtt
+max_connections $max_conn
 
 # MQTT over WebSockets behind Railway's HTTPS domain.
 listener 8080
 protocol websockets
+max_connections $max_conn
 EOT
 
 python3 /usr/local/bin/railway-healthz &
