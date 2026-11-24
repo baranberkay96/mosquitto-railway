@@ -51,8 +51,8 @@
      "required": false
     },
     "PORT": {
-     "defaultValue": "8081",
-     "description": "Private healthcheck port (GET /healthz). Not an MQTT port.",
+     "defaultValue": "8080",
+     "description": "Port of the public domain gateway (WebSockets pass-through and /healthz).",
      "required": false
     },
     "MQTT_URL": {

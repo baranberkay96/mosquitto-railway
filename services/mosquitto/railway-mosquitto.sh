@@ -2,8 +2,9 @@
 # Eclipse Mosquitto on Railway.
 #
 #   1883  MQTT (private network, and the TCP proxy for clients outside Railway)
-#   8080  MQTT over WebSockets (the public HTTPS domain: wss://{domain}/)
-#   $PORT private /healthz (MQTT login check) for Railway's healthcheck
+#   $PORT (8080) public HTTPS domain: railway-gateway passes WebSocket upgrades
+#         to Mosquitto (wss://{domain}/mqtt) and serves /healthz (MQTT login check)
+#   9001  Mosquitto's WebSockets listener, container-local
 #
 # Anonymous access is off; the user comes from MQTT_USERNAME/MQTT_PASSWORD and
 # is rewritten on every start. Deploy-form values never stop the deploy
@@ -19,8 +20,8 @@ DATA=/mosquitto/data
 PASSWD=$CONF_DIR/railway-passwd
 CONF=$CONF_DIR/railway.conf
 
-case "${PORT:-}" in ''|*[!0-9]*) log "PORT='${PORT:-}' is not a number, using 8081"; PORT=8081 ;; esac
-case "$PORT" in 1883|8080) log "PORT=$PORT collides with an MQTT listener, using 8081"; PORT=8081 ;; esac
+case "${PORT:-}" in ''|*[!0-9]*) log "PORT='${PORT:-}' is not a number, using 8080"; PORT=8080 ;; esac
+case "$PORT" in 1883|9001) log "PORT=$PORT collides with an MQTT listener, using 8080"; PORT=8080 ;; esac
 export PORT
 
 user="${MQTT_USERNAME:-mqtt}"
@@ -77,13 +78,13 @@ listener 1883
 protocol mqtt
 max_connections $max_conn
 
-# MQTT over WebSockets behind Railway's HTTPS domain.
-listener 8080
+# MQTT over WebSockets, reached through railway-gateway on \$PORT.
+listener 9001 127.0.0.1
 protocol websockets
 max_connections $max_conn
 EOT
 
-python3 /usr/local/bin/railway-healthz &
+python3 /usr/local/bin/railway-gateway &
 
-log "starting Mosquitto: MQTT :1883, WebSockets :8080, healthz :$PORT, user '$user'"
+log "starting Mosquitto: MQTT :1883, WebSockets via gateway :$PORT (healthz there too), user '$user'"
 exec /usr/sbin/mosquitto -c "$CONF"

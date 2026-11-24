@@ -10,7 +10,7 @@ This is a community template. It is not made, endorsed or supported by the Eclip
 
 ## Files written for this template
 
-`services/mosquitto/Dockerfile`, `railway-mosquitto.sh`, `railway-healthz.py` (MQTT 3.1.1 CONNECT check, written for this template) and the documentation were written for this template and are offered under the MIT License.
+`services/mosquitto/Dockerfile`, `railway-mosquitto.sh`, `railway-gateway.py` (WebSocket pass-through and MQTT 3.1.1 CONNECT healthcheck, written for this template) and the documentation were written for this template and are offered under the MIT License.
 
 ## Upstream files checked (tag v2.1.4)
 

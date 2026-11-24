@@ -10,9 +10,9 @@ FROM eclipse-mosquitto:2.1.4-alpine@sha256:fa12172a051310efe5bcb7a6a11b77bd5faac
 RUN apk add --no-cache python3
 
 COPY --chmod=0755 railway-mosquitto.sh /usr/local/bin/railway-mosquitto
-COPY --chmod=0755 railway-healthz.py /usr/local/bin/railway-healthz
+COPY --chmod=0755 railway-gateway.py /usr/local/bin/railway-gateway
 
-ENV PORT=8081
-EXPOSE 1883 8080 8081
+ENV PORT=8080
+EXPOSE 1883 8080
 
 ENTRYPOINT ["/usr/local/bin/railway-mosquitto"]

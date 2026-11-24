@@ -9,20 +9,19 @@ Composer spec. `template.json` is the machine-readable copy.
 | Name | Mosquitto |
 | Source | repo `baranberkay96/mosquitto-railway`, root `/services/mosquitto` |
 | Base | `eclipse-mosquitto:2.1.4-alpine@sha256:fa12172a…` (2026-11-17) + python3 |
-| Public domain | yes, target port 8080 (MQTT over WebSockets) |
+| Public domain | yes, target port 8080 (railway-gateway: WebSocket pass-through to Mosquitto 127.0.0.1:9001) |
 | TCP proxy | 1883 (MQTT) |
-| Healthcheck | `/healthz` on `PORT` 8081 (MQTT login check), 300 s |
+| Healthcheck | `/healthz` on `PORT` 8080 (MQTT login check), 300 s |
 | Restart | ALWAYS |
 | Volume | `/mosquitto/data` |
 
-Variables: `MQTT_USERNAME` mqtt, `MQTT_PASSWORD` (secret 32), `MQTT_MAX_CONNECTIONS` -1, `PORT` 8081, `MQTT_URL`, `MQTT_PUBLIC_URL`, `MQTT_WEBSOCKET_URL`, `RAILWAY_DEPLOYMENT_DRAINING_SECONDS` 15. No required inputs.
+Variables: `MQTT_USERNAME` mqtt, `MQTT_PASSWORD` (secret 32), `MQTT_MAX_CONNECTIONS` -1, `PORT` 8080, `MQTT_URL`, `MQTT_PUBLIC_URL`, `MQTT_WEBSOCKET_URL`, `RAILWAY_DEPLOYMENT_DRAINING_SECONDS` 15. No required inputs.
 
 ## Design
 
 - `railway-mosquitto` (sh, root): validates variables (8.29), writes the password file (`mosquitto_passwd -b`) and `railway.conf` at every start (variables authoritative), chowns the volume to uid 1883, starts the healthz helper, `exec mosquitto` (drops to `mosquitto` itself).
-- Listeners: 1883 MQTT and 8080 built-in WebSockets, no bind address (IPv4 + IPv6). `allow_anonymous false`, persistence every 300 s.
-- `railway-healthz` (python3): `/healthz` performs an MQTT 3.1.1 CONNECT with the generated user and returns 200 only on CONNACK 0 (8.34: a real check, not just a port).
-- Different ports for the healthcheck (`PORT`) and the public domain (`targetPort` 8080).
+- Listeners: 1883 MQTT (no bind address: IPv4 + IPv6) and 9001 built-in WebSockets on 127.0.0.1. `allow_anonymous false`, persistence every 300 s, `max_connections` per listener.
+- `railway-gateway` (python3 asyncio, all addresses on `PORT`): WebSocket upgrades are spliced byte for byte to 127.0.0.1:9001 (Mosquitto's built-in WebSockets close plain HTTP requests without a reply, which Railway's edge shows as 502); `/healthz` performs an MQTT 3.1.1 CONNECT with the generated user and returns 200 only on CONNACK 0 (8.34: a real check); `/` returns a short text page.
 
 ## Improvements over market templates
 

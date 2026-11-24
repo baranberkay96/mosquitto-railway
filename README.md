@@ -4,7 +4,7 @@ Eclipse Mosquitto is the lightweight, open-source MQTT broker used by IoT device
 
 ## About Hosting Eclipse Mosquitto
 
-An MQTT broker on the internet needs authentication from the first second, a raw TCP endpoint for devices, a WebSocket endpoint for browsers, and persistence so retained messages and offline sessions survive restarts. This community template builds the official `eclipse-mosquitto` image (pinned by digest) with a start script that disables anonymous access, writes the password file from the service variables on every start, persists data on a Railway volume and listens on all IPv4 and IPv6 addresses. Railway's healthcheck uses a private `/healthz` that really logs in to the broker over MQTT.
+An MQTT broker on the internet needs authentication from the first second, a raw TCP endpoint for devices, a WebSocket endpoint for browsers, and persistence so retained messages and offline sessions survive restarts. This community template builds the official `eclipse-mosquitto` image (pinned by digest) with a start script that disables anonymous access, writes the password file from the service variables on every start, persists data on a Railway volume and listens on all IPv4 and IPv6 addresses. A small gateway on the HTTPS domain passes WebSocket connections to Mosquitto and answers Railway's healthcheck at `/healthz` by really logging in to the broker over MQTT.
 
 ## Common Use Cases
 
