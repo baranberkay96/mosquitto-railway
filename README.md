@@ -1,5 +1,7 @@
 # Deploy and Host Eclipse Mosquitto with Railway
 
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/eclipse-mosquitto-21-mqtt-broker?referralCode=20H68q)
+
 Eclipse Mosquitto is the lightweight, open-source MQTT broker used by IoT devices, home automation and real-time apps to publish and subscribe to messages. This template runs Mosquitto 2.1 with password authentication, persistent sessions on a volume, MQTT through Railway's TCP proxy and encrypted MQTT over WebSockets on an HTTPS domain.
 
 ## About Hosting Eclipse Mosquitto
