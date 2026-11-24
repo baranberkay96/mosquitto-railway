@@ -45,10 +45,10 @@ chown -R mosquitto:mosquitto "$DATA"
 umask 077
 : > "$PASSWD"
 mosquitto_passwd -b "$PASSWD" "$user" "$pass"
-# Owner root (future Mosquitto versions require it), readable by the mosquitto group:
-# the broker reads it after dropping privileges.
-chown root:mosquitto "$PASSWD"
-chmod 0640 "$PASSWD"
+# The broker reads it after dropping to the mosquitto user and wants to own it
+# (mosquitto_passwd, run as root, warns about the opposite; that warning is harmless).
+chown mosquitto:mosquitto "$PASSWD"
+chmod 0600 "$PASSWD"
 # Credentials for the local healthcheck login (root-only file).
 mkdir -p /run
 printf '%s\n%s\n' "$user" "$pass" > /run/railway-mqtt-health
